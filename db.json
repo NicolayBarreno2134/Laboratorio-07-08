@@ -19,12 +19,19 @@
   "metro": [
     {
       "nombre": "Quitumbe",
-      "id": "aaab703b-6af6-4853-bf05-6134be5e8710",
       "sector": "Sur-norte",
       "salida": "Quitumbe",
       "llegada": "Carolina",
       "maquinista": "Byron",
-      "detalles": "nn"
+      "detalles": "nn",
+      "id": "aaab703b-6af6-4853-bf05-6134be5e8710"
     }
+  ],
+    "paradas": [
+    { "id": 1, "nombre": "Estadio Olímpico", "troncal": "Ecovía" },
+    { "id": 2, "nombre": "Marín Central", "troncal": "Corredor Sur Oriental" },
+    { "id": 3, "nombre": "Cumandá", "troncal": "Ecovía" },
+    { "id": 4, "nombre": "Chillogallo", "troncal": "Corredor Sur Oriental" },
+    { "id": 5, "nombre": "Quitumbe", "troncal": "Corredor Sur Oriental" }
   ]
 }

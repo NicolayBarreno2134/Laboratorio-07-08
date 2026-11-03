@@ -4,6 +4,7 @@ import logoBusesQuito from './assets/Buses-Quito.png'
 import { Formulario } from './components/Formulario'
 import Listar from './components/Listar'
 import { useState } from 'react'
+import ParadasCorredor from './components/ParadasCorredor'
 
 const ParadaBus = ({ nombre, troncal }) => {
   return (
@@ -15,15 +16,23 @@ const ParadaBus = ({ nombre, troncal }) => {
 };
 
 
-const ControlOcupacion = () => {
+const ControlOcupacion = ({ troncal }) => {
   const [pasajeros, setPasajeros] = useState(0);
+  const capacidad = 50;
+  const llena = pasajeros >= capacidad;
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md dark:bg-slate-800 dark:text-white mt-4 border-2 border-sky-600">
-      <h4 className="font-bold text-lg mb-2">Aforo de la Unidad (Ecovía)</h4>
-      <p className="mb-4">Pasajeros a bordo: <span className="text-2xl font-bold text-sky-700 dark:text-sky-300">{pasajeros}</span></p>
+      <h4 className="font-bold text-lg mb-2">Aforo de la Unidad ({troncal})</h4>
+      <p className="mb-2">Pasajeros a bordo: <span className="text-2xl font-bold text-sky-700 dark:text-sky-300">{pasajeros}</span> / {capacidad}</p>
+
+      {llena
+        ? <p className="mb-4 font-bold text-red-600">Unidad Llena</p>
+        : <p className="mb-4 font-bold text-green-600">Espacio Disponible</p>
+      }
+
       <div className="flex gap-2">
-        <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" onClick={() => setPasajeros(pasajeros + 1)}>+ Ingreso</button>
+        <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700" onClick={() => setPasajeros(pasajeros + 1)} disabled={llena}>+ Ingreso</button>
         <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" onClick={() => setPasajeros(pasajeros > 0 ? pasajeros - 1 : 0)}>- Salida</button>
         <button className="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700" onClick={() => setPasajeros(0)}>Vaciar</button>
       </div>
@@ -35,6 +44,7 @@ function App() {
   const [darkMode, setdarkMode] = useState(false)
   const [estado, setEstado] = useState(false)
   const [idMetro, setIdmetro] = useState(0) 
+  const [troncalActiva, setTroncalActiva] = useState("Ecovía")
 
   return (
     <div className={darkMode ? "dark" : ""}>
@@ -50,12 +60,21 @@ function App() {
       <div className="container mx-auto p-3 mt-4">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-               <h2 className="text-xl font-bold dark:text-white mb-2">Ruta Activa (Tema: Props)</h2>
+               <h2 className="text-xl font-bold dark:text-white mb-2">Ruta Activa </h2>
                <ParadaBus nombre="Estadio Olímpico" troncal="Ecovía" />
                <ParadaBus nombre="Marín Central" troncal="Corredor Sur Oriental" />
+                             <select
+                  value={troncalActiva}
+                  onChange={(e) => setTroncalActiva(e.target.value)}
+                  className="border-2 rounded-md p-2 my-3 dark:bg-slate-700 dark:text-white"
+               >
+                  <option value="Ecovía">Ecovía</option>
+                  <option value="Corredor Sur Oriental">Corredor Sur Oriental</option>
+               </select>
+               <ParadasCorredor troncal={troncalActiva} />
             </div>
             <div>
-               <ControlOcupacion />
+              <ControlOcupacion troncal={troncalActiva} />
             </div>
          </div>
       </div>
