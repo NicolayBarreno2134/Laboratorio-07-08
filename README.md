@@ -1,4 +1,4 @@
-# 🚌 MetroQuito: Laboratorio 07-08
+# 🚌 Laboratorio 07-08
 
 📌 **Descripción:** Aplicación web desarrollada con **React** para la gestión de rutas, paradas y unidades de transporte de Quito. Permite registrar, consultar, actualizar y eliminar unidades, además de controlar el aforo de una unidad en tiempo real.
 
