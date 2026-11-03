@@ -39,10 +39,12 @@
 ## 🖼️ Vista de la aplicación
 
 ### ☀️ Modo claro
-![Modo claro de la aplicación](docs/modo-claro.png)
+<img width="1354" height="609" alt="image" src="https://github.com/user-attachments/assets/32efba98-1e20-414a-bb9a-c1de32e1edc6" />
+
 
 ### 🌙 Modo oscuro
-![Modo oscuro de la aplicación](docs/modo-oscuro.png)
+<img width="1365" height="608" alt="image" src="https://github.com/user-attachments/assets/0c911106-fd75-43d2-8a82-5bf970e1fefb" />
+
 
 ---
 
