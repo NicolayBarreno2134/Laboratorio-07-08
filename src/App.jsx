@@ -5,16 +5,20 @@ import { Formulario } from './components/Formulario'
 import Listar from './components/Listar'
 import { useState } from 'react'
 import ParadasCorredor from './components/ParadasCorredor'
+import { Favoritos } from './components/Favoritos'
+import { useTiempoLlegada } from './hooks/useTiempoLlegada'
+import { useAlertasStore } from './store/useAlertasStore'
 
-const ParadaBus = ({ nombre, troncal }) => {
+const ParadaBus = ({ nombre, troncal, distanciaKm }) => {
+  const tiempoLlegada = useTiempoLlegada(distanciaKm)
   return (
     <div className="bg-sky-100 p-3 rounded-lg dark:bg-slate-700 dark:text-white my-2">
       <h3 className="font-bold">Parada: {nombre}</h3>
       <p>Línea / Troncal: {troncal}</p>
+      <p>Llegada estimada: {tiempoLlegada}</p>
     </div>
   );
 };
-
 
 const ControlOcupacion = ({ troncal }) => {
   const [pasajeros, setPasajeros] = useState(0);
@@ -41,6 +45,8 @@ const ControlOcupacion = ({ troncal }) => {
 };
 
 function App() {
+  const alertaOperativa = useAlertasStore((state) => state.alertaOperativa)
+  const limpiarAlerta = useAlertasStore((state) => state.limpiarAlerta)
   const [darkMode, setdarkMode] = useState(false)
   const [estado, setEstado] = useState(false)
   const [idMetro, setIdmetro] = useState(0) 
@@ -48,6 +54,12 @@ function App() {
 
   return (
     <div className={darkMode ? "dark" : ""}>
+      {alertaOperativa && (
+        <div role="alert" className="flex items-center justify-between gap-4 bg-amber-100 px-4 py-3 text-amber-950 dark:bg-amber-900 dark:text-amber-100">
+          <p>{alertaOperativa}</p>
+          <button type="button" onClick={limpiarAlerta} className="rounded px-3 py-1 font-semibold hover:bg-amber-200 dark:hover:bg-amber-800" aria-label="Cerrar alerta">Cerrar</button>
+        </div>
+      )}
 
       <nav className='bg-white h-20 flex justify-around items-center dark:bg-slate-800'>
         <img className='cursor-pointer' src={logoBusesQuito} alt="logo" width={50} height={50} />
@@ -61,8 +73,8 @@ function App() {
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                <h2 className="text-xl font-bold dark:text-white mb-2">Ruta Activa </h2>
-               <ParadaBus nombre="Estadio Olímpico" troncal="Ecovía" />
-               <ParadaBus nombre="Marín Central" troncal="Corredor Sur Oriental" />
+               <ParadaBus nombre="Estadio Olímpico" troncal="Ecovía" distanciaKm={10} />
+               <ParadaBus nombre="Marín Central" troncal="Corredor Sur Oriental" distanciaKm={6} />
                              <select
                   value={troncalActiva}
                   onChange={(e) => setTroncalActiva(e.target.value)}
@@ -77,6 +89,7 @@ function App() {
               <ControlOcupacion troncal={troncalActiva} />
             </div>
          </div>
+         <div className="mt-4"><Favoritos /></div>
       </div>
 
       <main className='container mx-auto flex gap-5 flex-wrap justify-center p-3 lg:flex-nowrap '>
@@ -109,3 +122,4 @@ function App() {
 }
 
 export default App
+

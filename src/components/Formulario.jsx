@@ -7,6 +7,7 @@ export const Formulario = ({setEstado,idMetro}) => {
 
     const [error, setError] = useState(false)
     const [mensaje, setMensaje] = useState(false)
+    const [errorServidor, setErrorServidor] = useState(false)
     const [form, setform] = useState({
             nombre:"",
             sector:"",
@@ -45,66 +46,62 @@ export const Formulario = ({setEstado,idMetro}) => {
     const handleChange = (e) => { 
         setform({
             ...form,
-            [e.target.name]: e.target.value.trim()
+            [e.target.name]: e.target.value
         })
     }
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
-        if (Object.values(form).includes("") || Object.entries(form).length === 0)
+        const formLimpio = Object.fromEntries(Object.entries(form).map(([campo, valor]) => [
+            campo,
+            typeof valor === 'string' ? valor.trim() : valor
+        ]))
+
+        if (Object.values(formLimpio).includes("") || Object.entries(formLimpio).length === 0)
         {
             setError(true)
-            setTimeout(() => {
-                setError(false)
-            }, 1000);
+            setTimeout(() => setError(false), 1000)
             return
         }
+
         try {
+            const editando = Boolean(formLimpio.id)
+            const url = editando
+                ? `http://localhost:3000/metro/${formLimpio.id}`
+                : 'http://localhost:3000/metro'
 
-            if(form.id){
-                const url = `http://localhost:3000/metro/${form.id}`
-                await fetch(url,{
-                    method:'PUT',
-                    body:JSON.stringify(form),
-                    headers:{'Content-Type':'application/json'}
-                })
-                setEstado(true)
+            if (!editando) formLimpio.id = uuidv4()
+
+            const respuesta = await fetch(url, {
+                method: editando ? 'PUT' : 'POST',
+                body: JSON.stringify(formLimpio),
+                headers: { 'Content-Type': 'application/json' }
+            })
+
+            if (!respuesta.ok) {
+                throw new Error(`El servidor respondió ${respuesta.status}`)
+            }
+
+            setErrorServidor(false)
+            setMensaje(!editando)
+            setEstado(true)
+            setform({})
+            setTimeout(() => {
+                setMensaje(false)
+                setEstado(false)
                 setform({})
-								setTimeout(() => {
-                    setEstado(false)
-                    setform({})
-                    
-                }, 1000)
-            }
-            else{
-                const url ="http://localhost:3000/metro"
-                            form.id = uuidv4()
-                await fetch(url,{
-                    method:'POST',
-                    body:JSON.stringify(form),
-                    headers:{'Content-Type':'application/json'}
-                })
-                setMensaje(true)
-                            setEstado(true)
-                setTimeout(() => {
-                    setMensaje(false)
-                                    setEstado(false)
-                    setform({})
-                }, 1000);
-            }
-
-            
+            }, 1000)
         } catch (error) {
-            console.log(error);
+            console.error('No se pudo guardar la ruta:', error)
+            setErrorServidor(true)
+            setTimeout(() => setErrorServidor(false), 4000)
         }
-
     }
-
-
     return (
         <form onSubmit={handleSubmit}>
             {error && <Mensajes tipo="bg-red-900">"Existen campos vacíos"</Mensajes>}
-            {mensaje && <Mensajes tipo="bg-green-900">"Registro exitoso"</Mensajes>}
+            {mensaje && <Mensajes tipo="bg-green-900">Registro exitoso</Mensajes>}
+            {errorServidor && <Mensajes tipo="bg-red-900">No se pudo guardar. Verifica que el servidor local esté activo.</Mensajes>}
             <div>
                 <label
                     htmlFor='nombre'
@@ -203,3 +200,7 @@ export const Formulario = ({setEstado,idMetro}) => {
         </form>
     )
 }
+
+
+
+
